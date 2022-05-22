@@ -9,6 +9,10 @@ app.loader
     .load(onAssetsLoaded);
 
 let dragon = null;
+const targetPos = {
+  x: null,
+  y: null
+}
 
 function onAssetsLoaded(loader, res) {
     // instantiate the spine animation
@@ -41,11 +45,46 @@ function onAssetsLoaded(loader, res) {
 
     // once position and scaled, set the animation to play
     dragon.state.setAnimation(0, 'flying', true);
-
     app.start();
+	console.log(dragon)
+  
 }
-
+	
 app.ticker.add(() => {
     // update the spine animation, only needed if dragon.autoupdate is set to false
     dragon.update(0.01666666666667); // HARDCODED FRAMERATE!
+});
+
+app.ticker.add((delta) => {
+  if (!targetPos.x) return	
+  // 控制飛行
+  if (dragon.x < targetPos.x) {
+      dragon.scale.x = 1
+	  dragon.x += 10
+	  if (dragon.x > targetPos.x) {
+      	dragon.x = targetPos.x
+	  }	
+  } else if (dragon.x > targetPos.x) {
+      dragon.scale.x = -1
+      dragon.x -= 10
+	  if (dragon.x < targetPos.x) {
+      	dragon.x = targetPos.x
+	  }		
+  }
+  if (dragon.y < targetPos.y) {
+	  dragon.y += 10
+	  if (dragon.y > targetPos.y) {
+      	dragon.y = targetPos.y
+	  }	
+  } else if (dragon.y > targetPos.y) {
+      dragon.y -= 10
+	  if (dragon.y < targetPos.y) {
+      	dragon.y = targetPos.y
+	  }		
+  } 	
+})
+
+app.renderer.view.addEventListener('click', function(e) {
+	targetPos.x = e.clientX
+  	targetPos.y = e.clientY
 });
